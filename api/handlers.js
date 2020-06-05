@@ -4,7 +4,7 @@ const fs = require("fs");
 const config = require("../config");
 
 const FILE_SCHEMA = require("../data/file-schema.json");
-const DATA_PATH = path.join(__dirname, "..", "data", "furniture-data.json");
+const DATA_PATH = path.join(__dirname, "..", "data", "files-data.json");
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
@@ -39,7 +39,7 @@ const handlers = {
       const filesDataString = await readFile(DATA_PATH, "utf-8");
       const filesData = JSON.parse(filesDataString);
 
-      const entryWithId = filesData.files.find((entry) => entry.id);
+      const entryWithId = filesData.files.find((entry) => entry.id === fileId);
 
       if (entryWithId) {
         const indexOfFiles = filesData.files.indexOf(entryWithId);
@@ -67,7 +67,7 @@ const handlers = {
       newFile.id = filesData.nextId;
       filesData.nextId++;
 
-      const isValid = tv4.validate(newFile, SCHEMA);
+      const isValid = tv4.validate(newFile, FILE_SCHEMA);
 
       if (!isValid) {
         const error = tv4.error;
@@ -105,7 +105,7 @@ const handlers = {
 
     const newFile = req.body;
     newFile.id = idToUpdate;
-    const isValid = tv4.validate(newFile, SCHEMA);
+    const isValid = tv4.validate(newFile, FILE_SCHEMA);
 
     if (!isValid) {
       const error = tv4.error;
